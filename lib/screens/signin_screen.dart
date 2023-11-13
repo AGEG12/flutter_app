@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/screens/home_screen.dart';
 
 
 class SigninScreen extends StatelessWidget {
@@ -49,7 +50,10 @@ class LoginForm extends StatelessWidget {
               const SizedBox(height: 20.0),
               ElevatedButton(
                 onPressed: () {
-                  // Coloca aquí la lógica de inicio de sesión
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                    );
                 },
                 child: const Text("Iniciar sesión"),
               ),
