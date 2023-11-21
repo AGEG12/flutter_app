@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+// import 'dart:convert';
+// import 'package:http/http.dart' as http;
 
+// libreria firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,7 +12,64 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+
+
 class _HomeScreenState extends State<HomeScreen> {
+  late List<DocumentSnapshot> moviesData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    final QuerySnapshot<Map<String, dynamic>> snapshot =
+        await FirebaseFirestore.instance.collection('movies').get();
+
+    setState(() {
+      moviesData = snapshot.docs;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Movies List'),
+      ),
+      body: moviesData.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: moviesData.length,
+              itemBuilder: (context, index) {
+                final movie = moviesData[index].data() as Map<String, dynamic>;
+                return ListTile(
+                  contentPadding: const EdgeInsets.all(16.0),
+                  title: Text(movie['title'] ?? 'No title'),
+                  subtitle: Text(movie['synopsis'] ?? 'No synopsis'),
+                  leading: Image.network(
+                    movie['cover_image'] ?? '',
+                    width: 50.0,
+                    height: 50.0,
+                  ),
+                  trailing: ElevatedButton(
+                    onPressed: () {
+                      // Acción al presionar el botón "Ver más"
+                    },
+                    child: const Text('Ver más'),
+                  ),
+                );
+              },
+            ),
+    );
+  }
+}
+
+
+
+
+/* class _HomeScreenState extends State<HomeScreen> {
   late List<dynamic> seriesData = [];
 
   @override
@@ -66,4 +125,4 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
     );
   }
-}
+} */
