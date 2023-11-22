@@ -3,7 +3,6 @@ import 'package:flutter_application_1/screens/home_screen.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 class EditMovieScreen extends StatefulWidget {
   final Map<String, dynamic> movieData;
 
@@ -48,7 +47,83 @@ class _EditMovieScreenState extends State<EditMovieScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ... (campos de entrada para cada atributo)
+              TextFormField(
+                initialValue: _title,
+                decoration:
+                    const InputDecoration(labelText: 'Título de la película'),
+                onSaved: (value) => _title = value ?? '',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa un título';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                initialValue: _director,
+                decoration:
+                    const InputDecoration(labelText: 'Director de la película'),
+                onSaved: (value) => _director = value ?? '',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa el nombre del director';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                initialValue: _yearOfRelease.toString(),
+                decoration:
+                    const InputDecoration(labelText: 'Año de lanzamiento'),
+                onSaved: (value) =>
+                    _yearOfRelease = int.tryParse(value ?? '') ?? 0,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa el año de lanzamiento';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                initialValue: _genre,
+                decoration:
+                    const InputDecoration(labelText: 'Género de la película'),
+                onSaved: (value) => _genre = value ?? '',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa el género de la película';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                initialValue: _synopsis,
+                decoration:
+                    const InputDecoration(labelText: 'Sinopsis de la película'),
+                maxLines: 3,
+                onSaved: (value) => _synopsis = value ?? '',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa la sinopsis de la película';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                initialValue: _imageCover,
+                decoration:
+                    const InputDecoration(labelText: 'URL de la imagen de portada'),
+                onSaved: (value) => _imageCover = value ?? '',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, ingresa el URL de la imagen de portada';
+                  }
+                  return null;
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
@@ -64,6 +139,8 @@ class _EditMovieScreenState extends State<EditMovieScreen> {
                 },
                 child: const Text('Cancelar'),
               ),
+                ],
+              ),
             ],
           ),
         ),
@@ -76,7 +153,7 @@ class _EditMovieScreenState extends State<EditMovieScreen> {
       // Actualiza el documento en Firestore con los nuevos valores
       await FirebaseFirestore.instance
           .collection('movies')
-          .doc(widget.movieData.id)
+          .doc(widget.movieData['uid'])
           .update({
         'title': _title,
         'director': _director,
@@ -85,10 +162,11 @@ class _EditMovieScreenState extends State<EditMovieScreen> {
         'synopsis': _synopsis,
         'cover_image': _imageCover,
       });
-
-      Navigator.pop(context); // Regresar a la pantalla anterior
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      ); // Regresar a la pantalla anterior
       // Llama a fetchData para actualizar la lista de películas
-      //HomeScreen.fetchData();
     } catch (e) {
       print('Error al guardar los cambios: $e');
     }

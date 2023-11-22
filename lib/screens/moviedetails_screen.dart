@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screens/editmovie_screen.dart';
+import 'package:flutter_application_1/screens/home_screen.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MovieDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> movieData;
@@ -19,7 +21,8 @@ class MovieDetailsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.network(
-              movieData['cover_image'] ?? 'https://static.vecteezy.com/system/resources/previews/004/726/030/non_2x/warning-upload-error-icon-with-cloud-vector.jpg',
+              movieData['cover_image'] ??
+                  'https://static.vecteezy.com/system/resources/previews/004/726/030/non_2x/warning-upload-error-icon-with-cloud-vector.jpg',
               height: 450.0,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -35,20 +38,53 @@ class MovieDetailsScreen extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context); // Regresar al listado
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Eliminar Película'),
+                          content: const Text(
+                              '¿Estás seguro de que deseas eliminar esta película?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Cancelar'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                // Eliminar la película de Firestore
+                                await FirebaseFirestore.instance
+                                    .collection('movies')
+                                    .doc(movieData['uid'])
+                                    .delete();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomeScreen()),
+                                );
+                              },
+                              child: const Text('Eliminar'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
-                  child: const Text('Regresar al listado'),
+                  child: const Text('Eliminar'),
                 ),
                 ElevatedButton(
                   onPressed: () {
-                      Navigator.push(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditMovieScreen(movieData: widget.movieData),
+                        builder: (context) =>
+                            EditMovieScreen(movieData: movieData),
                       ),
                     );
                   },
-                  child: const Text('Editar película'),
+                  child: const Text('Editar'),
                 ),
               ],
             ),

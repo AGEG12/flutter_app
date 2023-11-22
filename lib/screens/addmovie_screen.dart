@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_application_1/screens/home_screen.dart';
+import 'package:uuid/uuid.dart';
 
 class AddMovieScreen extends StatefulWidget {
   const AddMovieScreen({super.key});
@@ -32,7 +34,8 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Título de la película'),
+                decoration:
+                    const InputDecoration(labelText: 'Título de la película'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, introduce el título';
@@ -44,7 +47,8 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                 },
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Director de la película'),
+                decoration:
+                    const InputDecoration(labelText: 'Director de la película'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, introduce el nombre del director';
@@ -56,7 +60,8 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                 },
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Año de lanzamiento'),
+                decoration:
+                    const InputDecoration(labelText: 'Año de lanzamiento'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -69,7 +74,8 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                 },
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Género de la película'),
+                decoration:
+                    const InputDecoration(labelText: 'Género de la película'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, introduce el género';
@@ -81,7 +87,8 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                 },
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Sinopsis de la película'),
+                decoration:
+                    const InputDecoration(labelText: 'Sinopsis de la película'),
                 maxLines: 3,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -94,7 +101,8 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
                 },
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'URL de la imagen de portada'),
+                decoration: const InputDecoration(
+                    labelText: 'URL de la imagen de portada'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, introduce la URL de la imagen de portada';
@@ -135,16 +143,21 @@ class _AddMovieScreenState extends State<AddMovieScreen> {
 
   Future<void> saveMovie() async {
     try {
-      await FirebaseFirestore.instance.collection('movies').add({
+      var uuid = const Uuid();
+      String movieId = uuid.v4();
+      await FirebaseFirestore.instance.collection('movies').doc(movieId).set({
         'title': _title,
         'director': _director,
         'year_of_release': _yearOfRelease,
         'genre': _genre,
         'synopsis': _synopsis,
+        'uid': movieId,
         'cover_image': _imageCover,
       });
-      Navigator.pop(context);
-      //HomeScreen().fetchData();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
     } catch (e) {
       print('Error al guardar la película: $e');
     }

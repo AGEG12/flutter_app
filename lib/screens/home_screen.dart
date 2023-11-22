@@ -39,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Movies List'),
+        automaticallyImplyLeading: false,
       ),
       body: moviesData.isEmpty
           ? const Center(child: CircularProgressIndicator())
