@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/screens/addmovie_screen.dart';
+import 'package:flutter_application_1/screens/moviedetails_screen.dart';
 // import 'dart:convert';
 // import 'package:http/http.dart' as http;
 
@@ -49,20 +51,34 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Text(movie['title'] ?? 'No title'),
                   subtitle: Text(movie['synopsis'] ?? 'No synopsis'),
                   leading: Image.network(
-                    movie['cover_image'] ?? '',
+                    movie['cover_image'] ?? 'https://static.vecteezy.com/system/resources/previews/004/726/030/non_2x/warning-upload-error-icon-with-cloud-vector.jpg',
                     width: 50.0,
-                    height: 50.0,
+                    height: 100.0,
                   ),
                   trailing: ElevatedButton(
                     onPressed: () {
-                      // Acción al presionar el botón "Ver más"
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MovieDetailsScreen(movieData: movie),
+                      ),
+                    );
                     },
                     child: const Text('Ver más'),
                   ),
                 );
               },
             ),
-    );
+            floatingActionButton: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AddMovieScreen()),
+                    );
+                  },
+                  child: const Icon(Icons.add),
+                ),
+    );    
   }
 }
 
